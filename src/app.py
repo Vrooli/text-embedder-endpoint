@@ -19,6 +19,7 @@ try:
 except Exception as e:
     logger.error(f"Error loading model: {e}")
     model = None
+logger.info('Model loaded!')
 
 @app.route('/embed', methods=['POST'])
 def embed():
@@ -31,10 +32,9 @@ def embed():
     # Convert tensor to list and return
     return jsonify(embeddings.tolist())
 
-if __name__ == "__main__":
-    try:
-        port = os.environ['PORT_EMBEDDINGS']
-        logger.info(f"Starting server on port {port}")
-        app.run(host='0.0.0.0', port=port)
-    except Exception as e:
-        logger.error(f"Error starting server: {e}")
+try:
+    port = os.environ['PORT_EMBEDDINGS']
+    logger.info(f"Starting server on port {port}")
+    app.run(host='0.0.0.0', port=port)
+except Exception as e:
+    logger.error(f"Error starting server: {e}")

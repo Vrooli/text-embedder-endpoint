@@ -20,6 +20,8 @@ services:
       LETSENCRYPT_EMAIL: "${LETSENCRYPT_EMAIL}"
     volumes:
       - ./:${PROJECT_DIR}
+    ports:
+      - "${PORT_EMBEDDINGS}:${PORT_EMBEDDINGS}"
     networks:
       - proxy
       - app
