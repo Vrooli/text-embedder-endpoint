@@ -1,0 +1,6 @@
+redis
+Flask
+gunicorn==20.1.0
+InstructorEmbedding
+python-dotenv
+sentence_transformers

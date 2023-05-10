@@ -2,27 +2,8 @@
 
 This repository contains a Flask API endpoint for generating text embeddings from a Hugging Face model. The application is dockerized and is designed to be deployed using Docker Compose. It features Redis for caching embeddings to improve performance, and uses nginx-proxy for handling incoming requests.
 
-## Setup
-
-1. Clone this repository to your local machine or server.
-
-   ```
-   git clone https://github.com/Vrooli/text-embedder-endpoint.git
-   ```
-
-2. Navigate to the project directory.
-
-   ```
-   cd text-embedder-endpoint
-   ```
-
-3. Build and start the application using Docker Compose.
-
-   ```
-   docker-compose up
-   ```
-
-This will start three services: the Flask application, Redis, and nginx-proxy. 
+## [👩🏼‍💻 Developer setup][setup-guide]
+Learn how to setup the development workflow, and general development tips.
 
 ## Usage
 
