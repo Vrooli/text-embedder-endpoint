@@ -5,6 +5,9 @@ ARG PROJECT_DIR
 ARG VIRTUAL_PORT
 WORKDIR ${PROJECT_DIR}
 
+# Copy the local model files to the image
+COPY ./models/hkunlp_instructor-base/ /root/.cache/torch/sentence_transformers/hkunlp_instructor-base/
+
 COPY requirements.txt .
 
 # Install build dependencies, build the Python packages, and remove build dependencies to reduce image size
