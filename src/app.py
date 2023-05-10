@@ -20,7 +20,7 @@ r = redis.Redis(host='redis', port=6379, db=0, decode_responses=True)
 
 try:
     # Load the model
-    logger.info('Loading model. This might take a while...')
+    logger.info('Loading model...')
     model = INSTRUCTOR('hkunlp/instructor-base')
 except Exception as e:
     logger.error(f"Error loading model: {e}")

@@ -27,6 +27,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Transfer and load Docker images
+BUILD_ZIP="/var/tmp/embeddings"
 if [ -f "${BUILD_ZIP}/production-docker-images.tar.gz" ]; then
     info "Loading Docker images from ${BUILD_ZIP}/production-docker-images.tar.gz"
     docker load -i "${BUILD_ZIP}/production-docker-images.tar.gz"
@@ -49,5 +50,4 @@ docker-compose --env-file ${BUILD_ZIP}/.env-prod -f ${HERE}/../docker-compose-pr
 
 success "Done! You may need to wait a few minutes for the Docker containers to finish starting up."
 info "Now that you've deployed, here are some next steps:"
-info "- Manually check that Valyxa is working correctly"
-info "- Let everyone on social media know that you've deployed a new version of Valyxa!"
+info "- Manually check that it is working correctly"

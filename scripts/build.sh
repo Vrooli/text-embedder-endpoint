@@ -60,7 +60,7 @@ docker pull redis:7-alpine
 
 # Save and compress Docker images
 info "Saving Docker images..."
-docker save -o production-docker-images.tar valyxa-python:prod redis:7-alpine
+docker save -o production-docker-images.tar embeddings:prod redis:7-alpine
 if [ $? -ne 0 ]; then
     error "Failed to save Docker images"
     exit 1
@@ -81,7 +81,7 @@ fi
 
 if [ "${DEPLOY}" = "y" ] || [ "${DEPLOY}" = "Y" ] || [ "${DEPLOY}" = "yes" ] || [ "${DEPLOY}" = "Yes" ]; then
     source "${HERE}/keylessSsh.sh"
-    BUILD_DIR="${SITE_IP}:/var/tmp/valyxa/"
+    BUILD_DIR="${SITE_IP}:/var/tmp/embeddings/"
     prompt "Going to copy to ${BUILD_DIR}. Press any key to continue..."
     read -r
     rsync -ri production-docker-images.tar.gz .env-prod root@${BUILD_DIR}
@@ -91,7 +91,7 @@ if [ "${DEPLOY}" = "y" ] || [ "${DEPLOY}" = "Y" ] || [ "${DEPLOY}" = "yes" ] || 
     fi
     success "Files copied to ${BUILD_DIR}! To finish deployment, run deploy.sh on the VPS."
 else
-    BUILD_DIR="/var/tmp/valyxa"
+    BUILD_DIR="/var/tmp/embeddings"
     info "Copying locally to ${BUILD_DIR}."
     # Make sure to create missing directories
     mkdir -p "${BUILD_DIR}"
