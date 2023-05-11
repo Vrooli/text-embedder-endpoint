@@ -25,8 +25,5 @@ title: "The title with characters escaped correctly"
 description: "the description with characters escaped correctly"
 ```
 
-## Notes
-This is a basic setup and might need additional features like logging, error handling, environment-specific configurations, and authentication for a production setup. Also, ensure your server has enough resources (RAM, disk space) to host the model and perform inference.
-
 
 [setup-guide]: https://github.com/MattHalloran/ReactGraphQLTemplate#how-to-start
