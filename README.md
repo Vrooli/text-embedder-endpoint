@@ -45,6 +45,11 @@ title: "The title with characters escaped correctly"
 description: "the description with characters escaped correctly"
 ```
 
+## License
+This project is licensed under the terms of the GNU General Public License v3.0. You can check out the full license in the [LICENSE](./LICENSE) file.
+
+This project uses the unmodified [instructor-embedding](https://github.com/HKUNLP/instructor-embedding) base model, which is licensed under Apache License 2.0. The license for this model can be found in the [LICENSE.instructor-embedding](./LICENSE.instructor-embedding) file.
+
 ## Contributions
 Contributions are always welcome! If you have suggestions for improvements, please create an issue or a pull request💖
 
