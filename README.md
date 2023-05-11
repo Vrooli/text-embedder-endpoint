@@ -25,5 +25,8 @@ title: "The title with characters escaped correctly"
 description: "the description with characters escaped correctly"
 ```
 
+## Contributions
+Contributions are always welcome! If you have suggestions for improvements, please create an issue or a pull request💖
+
 
 [setup-guide]: https://github.com/MattHalloran/ReactGraphQLTemplate#how-to-start
