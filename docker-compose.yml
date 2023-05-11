@@ -7,7 +7,7 @@ services:
       args:
         PROJECT_DIR: "${PROJECT_DIR}"
     container_name: embeddings
-    image: embeddings:dev
+    image: embeddings
     restart: always
     environment:
       FLASK_APP: src/app.py

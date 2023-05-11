@@ -49,24 +49,24 @@ check_var() {
     fi
 }
 check_var REDIS_URL
-check_var OPENAI_API_KEY
+check_var SITE_IP
 
 # Build Docker images
 cd ${HERE}/..
 info "Building (and Pulling) Docker images..."
-docker-compose --env-file .env -f docker-compose-prod.yml build
+docker-compose --env-file .env -f docker-compose.yml build
 docker pull postgres:13-alpine
 docker pull redis:7-alpine
 
 # Save and compress Docker images
 info "Saving Docker images..."
-docker save -o production-docker-images.tar embeddings:prod redis:7-alpine
+docker save -o production-docker-images.tar embeddings redis:7-alpine
 if [ $? -ne 0 ]; then
     error "Failed to save Docker images"
     exit 1
 fi
 trap "rm production-docker-images.tar*" EXIT
-info "Compressing Docker images..."
+info "Compressing Docker images. This may take a while..."
 gzip -f production-docker-images.tar
 if [ $? -ne 0 ]; then
     error "Failed to compress Docker images"
@@ -76,15 +76,17 @@ fi
 # Copy build to VPS
 if [ -z "$DEPLOY" ]; then
     prompt "Build successful! Would you like to send the build to the production server? (y/N)"
-    read -r DEPLOY
+    read -n1 -r DEPLOY
+    echo
 fi
 
 if [ "${DEPLOY}" = "y" ] || [ "${DEPLOY}" = "Y" ] || [ "${DEPLOY}" = "yes" ] || [ "${DEPLOY}" = "Yes" ]; then
     source "${HERE}/keylessSsh.sh"
     BUILD_DIR="${SITE_IP}:/var/tmp/embeddings/"
     prompt "Going to copy to ${BUILD_DIR}. Press any key to continue..."
-    read -r
-    rsync -ri production-docker-images.tar.gz .env-prod root@${BUILD_DIR}
+    read -n1 -r
+    echo
+    rsync -ri production-docker-images.tar.gz .env root@${BUILD_DIR}
     if [ $? -ne 0 ]; then
         error "Failed to copy files to ${BUILD_DIR}"
         exit 1
@@ -100,10 +102,10 @@ else
         error "Failed to copy files to ${BUILD_DIR}"
         exit 1
     fi
-    # If building locally, use .env and rename it to .env-prod
-    cp -p .env ${BUILD_DIR}/.env-prod
+    # If building locally, use .env
+    cp -p .env ${BUILD_DIR}/.env
     if [ $? -ne 0 ]; then
-        error "Failed to copy .env to ${BUILD_DIR}/.env-prod"
+        error "Failed to copy .env to ${BUILD_DIR}/.env"
         exit 1
     fi
 fi

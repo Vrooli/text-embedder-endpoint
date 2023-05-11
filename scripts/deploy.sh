@@ -42,11 +42,11 @@ fi
 
 # Stop docker containers
 info "Stopping docker containers..."
-docker-compose --env-file ${BUILD_ZIP}/.env-prod down
+docker-compose --env-file ${BUILD_ZIP}/.env down
 
 # Restart docker containers.
 info "Restarting docker containers..."
-docker-compose --env-file ${BUILD_ZIP}/.env-prod -f ${HERE}/../docker-compose-prod.yml up -d
+docker-compose --env-file ${BUILD_ZIP}/.env -f ${HERE}/../docker-compose.yml up -d
 
 success "Done! You may need to wait a few minutes for the Docker containers to finish starting up."
 info "Now that you've deployed, here are some next steps:"
