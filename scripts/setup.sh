@@ -40,7 +40,6 @@ RUNLEVEL=1 sudo apt-get -y upgrade
 if [ -z "${ON_REMOTE}" ]; then
     prompt "Is this script being run on the remote server? (Y/n)"
     read -n1 -r ON_REMOTE
-    echo
 fi
 if [ "${ON_REMOTE}" = "y" ] || [ "${ON_REMOTE}" = "Y" ] || [ "${ON_REMOTE}" = "yes" ] || [ "${ON_REMOTE}" = "Yes" ]; then
     header "Enabling PasswordAuthentication"
