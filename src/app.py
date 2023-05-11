@@ -2,7 +2,7 @@ import os
 import hashlib
 import json
 import logging
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, abort
 from InstructorEmbedding import INSTRUCTOR
 from dotenv import load_dotenv
 import redis
@@ -27,10 +27,18 @@ except Exception as e:
     model = None
 logger.info('Model loaded!')
 
+# If API_KEY environment variable is set, require it in the request headers
+@app.before_request
+def check_api_key():
+    api_key = request.headers.get('key')
+    if os.environ.get('API_KEY'):
+        if not api_key:
+            abort(401, 'API Key required')
+        elif not api_key == os.environ.get('API_KEY'):
+            abort(401, 'Invalid API Key')
+
 @app.route('/', methods=['POST'])
 def embed():
-    logger.info('route start')
-    print("route start")
     instruction = request.json.get('instruction')
     sentences = request.json.get('sentences')
 
@@ -46,7 +54,6 @@ def embed():
         else:
             # If not, compute the embeddings
             embeddings = model.encode([[instruction, sentence]])
-            logger.info(f'Embedding length: {len(embeddings[0])}')
 
             # Convert tensor to list
             embeddings = embeddings.tolist()
@@ -58,9 +65,32 @@ def embed():
 
     return jsonify({"embeddings": all_embeddings, "model": "instructor-base"})
 
+@app.route('/help', methods=['GET'])
+def help():
+    help_text = """
+    To use this API, send a POST request to the root endpoint '/' with the following JSON body:
+
+    {
+      "instruction": "<your instruction here>",
+      "sentences": ["sentence1", "sentence2", "..."]
+    }
+
+    The API will return a JSON with the embeddings for each sentence and the model name.
+
+    For more information, check out the GitHub repository: https://github.com/Vrooli/text-embedder-endpoint
+    """
+    return jsonify({"Help": help_text})
+
+@app.route('/healthcheck', methods=['GET'])
+def healthcheck():
+    return jsonify({"status": "healthy"})
+
 try:
     port = os.environ['PORT_EMBEDDINGS']
-    logger.info(f"Starting server on port {port}")
+    if os.environ.get('API_KEY'):
+        logger.info(f"Starting server on port {port} in private mode")
+    else:
+        logger.info(f"Starting server on port {port} in public mode")
     app.run(host='0.0.0.0', port=port)
 except Exception as e:
     logger.error(f"Error starting server: {e}")

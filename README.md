@@ -2,23 +2,34 @@
 This repository contains a simple Flask API for generating text embeddings from the [instructor-embedding](https://github.com/HKUNLP/instructor-embedding) base model. As of 2023-05-11, this model is 6th on the [Massive Text Embedding Benchmark (MTEB) Leaderboard](https://huggingface.co/spaces/mteb/leaderboard). The application is dockerized and is designed to be deployed using Docker Compose. It features Redis for caching embeddings to improve performance, and uses nginx-proxy for handling incoming requests.
 
 ## [👩🏼‍💻 Developer setup][setup-guide]
-Here is our setup guide for setting up, developing with, and deploying all Vrooli repos. The setup is almost identical for this repo, but with even less steps.
+Linked is our setup guide for setting up, developing with, and deploying all Vrooli repos. The setup is almost identical for this repo, but with even less steps.
 
 ### Minimum requirements for Virtual Private Server (VPS)
 - Memory: 2GB  
 - CPUs: 1
 
 ## Usage
-Send a POST request to `http://localhost:<PORT_EMBEDDING>/embed` if testing locally, or `https://<your-domain>/embed` if testing on a Virtual Private Server (VPS). The request must contain the following structure:
+Send a POST request to `http://localhost:<PORT_EMBEDDING>` if testing locally, or `https://<your-domain>` if testing on a Virtual Private Server (VPS). The request must contain the following structure:
 
 ```json
 {
+    "key": "<your-api-key>", // Only if API_KEY environment variable is set
     "instruction": "Hello, world!",
     "sentences": ["First text you are creating an embedding for", "Another text that needs embeddings"]
 }
 ```
 
-And it will return an object of this shape:
+As a curl request, it looks like this:
+
+```bash
+curl -X POST \
+     -H "Content-Type: application/json" \
+     -H "key: <your_api_key>" \
+     -d '{"instruction":"Hello, world!", "sentences": ["First text you are creating an embedding for", "Another text that needs embeddings"]}' \
+     http://localhost:3369
+```
+
+If you are authenticated, it will return an object of this shape:
 
 ```
 {

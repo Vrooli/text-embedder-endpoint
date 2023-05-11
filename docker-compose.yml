@@ -12,9 +12,10 @@ services:
     environment:
       FLASK_APP: src/app.py
       FLASK_RUN_HOST: 0.0.0.0
-      PYTHONUNBUFFERED: 1
+      PYTHONUNBUFFERED: 1 # Required for logging to work correctly
       PROJECT_DIR: "${PROJECT_DIR}"
       REDIS_URL: "${REDIS_URL}"
+      API_KEY: "${API_KEY}"
       VIRTUAL_HOST: "${VIRTUAL_HOST}"
       VIRTUAL_PORT: "${PORT_EMBEDDINGS}"
       LETSENCRYPT_HOST: "${VIRTUAL_HOST}"
