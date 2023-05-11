@@ -12,6 +12,7 @@ services:
     environment:
       FLASK_APP: src/app.py
       FLASK_RUN_HOST: 0.0.0.0
+      PYTHONUNBUFFERED: 1
       PROJECT_DIR: "${PROJECT_DIR}"
       REDIS_URL: "${REDIS_URL}"
       VIRTUAL_HOST: "${VIRTUAL_HOST}"
@@ -38,7 +39,7 @@ services:
       - ./data/redis:${PROJECT_DIR}/data/redis:z
     ports:
       - "6379:6379"
-    command: /bin/sh -c "mkdir -p ${PROJECT_DIR}/data/redis/appendonlydir && rm -f ${PROJECT_DIR}/data/redis/dump.rdb && redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru --appendonly yes --dbfilename dump.rdb --dir ${PROJECT_DIR}/data/redis/"
+    command: sh -c "mkdir -p /data/redis/appendonlydir && rm -f /data/redis/dump.rdb && redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru --appendonly yes --dbfilename dump.rdb --dir /data/redis/"
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s

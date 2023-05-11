@@ -27,33 +27,36 @@ except Exception as e:
     model = None
 logger.info('Model loaded!')
 
-@app.route('/embed', methods=['POST'])
+@app.route('/', methods=['POST'])
 def embed():
+    logger.info('route start')
+    print("route start")
     instruction = request.json.get('instruction')
-    sentence = request.json.get('sentence')
+    sentences = request.json.get('sentences')
 
-    # Create a hash from the input
-    input_hash = hashlib.sha256(f"{instruction}{sentence}".encode()).hexdigest()
+    all_embeddings = []
+    for sentence in sentences:
+        # Create a hash from the input
+        input_hash = hashlib.sha256(f"{instruction}{sentence}".encode()).hexdigest()
 
-    # Check if Redis has a key with that hash
-    if r.exists(input_hash):
-        # If so, use that data
-        embeddings = json.loads(r.get(input_hash))
-    else:
-        # If not, compute the embeddings
-        embeddings = model.encode([[instruction, sentence]])
+        # Check if Redis has a key with that hash
+        if r.exists(input_hash):
+            # If so, use that data
+            embeddings = json.loads(r.get(input_hash))
+        else:
+            # If not, compute the embeddings
+            embeddings = model.encode([[instruction, sentence]])
+            logger.info(f'Embedding length: {len(embeddings[0])}')
 
-        # Convert tensor to list
-        embeddings = embeddings.tolist()
+            # Convert tensor to list
+            embeddings = embeddings.tolist()
 
-        # Store the embeddings in Redis
-        r.set(input_hash, json.dumps(embeddings))
+            # Store the embeddings in Redis
+            r.set(input_hash, json.dumps(embeddings))
 
-        # Set a reasonable expiry time if you want to delete old data
-        # Here, for example, 24 hours (86400 seconds)
-        r.expire(input_hash, 86400)
+        all_embeddings.extend(embeddings)
 
-    return jsonify(embeddings)
+    return jsonify({"embeddings": all_embeddings, "model": "instructor-base"})
 
 try:
     port = os.environ['PORT_EMBEDDINGS']

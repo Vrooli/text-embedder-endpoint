@@ -14,7 +14,16 @@ Send a POST request to `http://localhost:<PORT_EMBEDDING>/embed` if testing loca
 ```json
 {
     "instruction": "Hello, world!",
-    "sentence": "The text you are creating an embedding for"
+    "sentences": ["First text you are creating an embedding for", "Another text that needs embeddings"]
+}
+```
+
+And it will return something like this:
+
+```
+{
+    "embeddings": [[0.5000, 0.3456, ..., 0.1234]], // 768-dimensional vector for each sentence
+    "model": "instructor-embedding",
 }
 ```
 
