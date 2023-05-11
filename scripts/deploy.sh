@@ -6,8 +6,34 @@
 # 1. Runs git fetch and git pull to get the latest changes.
 # 2. Runs setup.sh
 # 3. Restarts docker containers
+# 
+# Arguments (all optional):
+# -n: Nginx proxy location (e.g. "/root/NginxSSLReverseProxy")
+# -h: Show this help message
 HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source "${HERE}/prettify.sh"
+
+# Read arguments
+SETUP_ARGS=()
+for arg in "$@"; do
+    case $arg in
+    -n | --nginx-location)
+        NGINX_LOCATION="${2}"
+        shift
+        shift
+        ;;
+    -h | --help)
+        echo "Usage: $0 [-v VERSION] [-n NGINX_LOCATION]"
+        echo "  -n --nginx-location: Nginx proxy location (e.g. \"/root/NginxSSLReverseProxy\")"
+        echo "  -h --help: Show this help message"
+        exit 0
+        ;;
+    *)
+        SETUP_ARGS+=("${arg}")
+        shift
+        ;;
+    esac
+done
 
 # Pull the latest changes from the repository.
 info "Pulling latest changes from repository..."
@@ -16,6 +42,49 @@ git pull
 if [ $? -ne 0 ]; then
     error "Could not pull latest changes from repository. You likely have uncommitted changes."
     exit 1
+fi
+
+# Check if nginx-proxy and nginx-proxy-le are running
+if [ ! "$(docker ps -q -f name=nginx-proxy)" ] || [ ! "$(docker ps -q -f name=nginx-proxy-le)" ]; then
+    error "Proxy containers are not running!"
+    if [ -z "$NGINX_LOCATION" ]; then
+        while true; do
+            prompt "Enter path to proxy container directory (defaults to /root/NginxSSLReverseProxy):"
+            read -r NGINX_LOCATION
+            if [ -z "$NGINX_LOCATION" ]; then
+                NGINX_LOCATION="/root/NginxSSLReverseProxy"
+            fi
+
+            if [ -d "${NGINX_LOCATION}" ]; then
+                break
+            else
+                error "Not found at that location."
+                prompt "Do you want to try again? Say no to clone and set up proxy containers (yes/no):"
+                read -r TRY_AGAIN
+                if [[ "$TRY_AGAIN" =~ ^(no|n)$ ]]; then
+                    info "Proceeding with cloning..."
+                    break
+                fi
+            fi
+        done
+    fi
+
+    # Check if the NginxSSLReverseProxy directory exists
+    if [ ! -d "${NGINX_LOCATION}" ]; then
+        info "NginxSSLReverseProxy not installed. Cloning and setting up..."
+        git clone https://github.com/MattHalloran/NginxSSLReverseProxy.git "${NGINX_LOCATION}"
+        chmod +x "${NGINX_LOCATION}/scripts/*"
+        "${NGINX_LOCATION}/scripts/fullSetup.sh"
+    fi
+
+    # Check if ${NGINX_LOCATION}/docker-compose.yml or ${NGINX_LOCATION}/docker-compose.yaml exists
+    if [ -f "${NGINX_LOCATION}/docker-compose.yml" ] || [ -f "${NGINX_LOCATION}/docker-compose.yaml" ]; then
+        info "Starting proxy containers..."
+        cd "${NGINX_LOCATION}" && docker-compose up -d
+    else
+        error "Could not find docker-compose.yml file in ${NGINX_LOCATION}"
+        exit 1
+    fi
 fi
 
 # Running setup.sh
