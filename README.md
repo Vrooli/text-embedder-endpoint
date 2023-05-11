@@ -18,7 +18,7 @@ Send a POST request to `http://localhost:<PORT_EMBEDDING>/embed` if testing loca
 }
 ```
 
-And it will return something like this:
+And it will return an object of this shape:
 
 ```
 {
