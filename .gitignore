@@ -129,6 +129,7 @@ celerybeat.pid
 
 # Compressed files
 *.tar.gz
+*.tar
 
 # Environments
 .env
