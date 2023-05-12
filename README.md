@@ -2,7 +2,7 @@
 This repository contains a simple Flask API for generating text embeddings from the [instructor-embedding](https://github.com/HKUNLP/instructor-embedding) base model. As of 2023-05-11, this model is 6th on the [Massive Text Embedding Benchmark (MTEB) Leaderboard](https://huggingface.co/spaces/mteb/leaderboard). The application is dockerized and is designed to be deployed using Docker Compose. It features Redis for caching embeddings to improve performance, and uses nginx-proxy for handling incoming requests.
 
 ## [👩🏼‍💻 Developer setup][setup-guide]
-Linked is our setup guide for setting up, developing with, and deploying all Vrooli repos. The setup is almost identical for this repo, but with even less steps.
+Linked is our guide for setting up all Vrooli repos. No extra steps are required.
 
 ### Minimum requirements for Virtual Private Server (VPS)
 - Memory: 2GB  
@@ -54,4 +54,4 @@ This project uses the unmodified [instructor-embedding](https://github.com/HKUNL
 Contributions are always welcome! If you have suggestions for improvements, please create an issue or a pull request💖
 
 
-[setup-guide]: https://github.com/MattHalloran/ReactGraphQLTemplate#how-to-start
+[setup-guide]: https://docs.vrooli.com/setup/getting_started.html
