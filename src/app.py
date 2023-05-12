@@ -91,6 +91,7 @@ try:
         logger.info(f"Starting server on port {port} in private mode")
     else:
         logger.info(f"Starting server on port {port} in public mode")
-    app.run(host='0.0.0.0', port=port)
+    if os.environ['FLASK_ENV'] == 'development':
+        app.run(host='0.0.0.0', port=port)
 except Exception as e:
     logger.error(f"Error starting server: {e}")

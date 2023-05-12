@@ -11,6 +11,7 @@ services:
     restart: always
     environment:
       FLASK_APP: src/app.py
+      FLASK_ENV: production
       FLASK_RUN_HOST: 0.0.0.0
       PYTHONUNBUFFERED: 1 # Required for logging to work correctly
       PROJECT_DIR: "${PROJECT_DIR}"
