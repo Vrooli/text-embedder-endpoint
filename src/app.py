@@ -86,7 +86,7 @@ def healthcheck():
     return jsonify({"status": "healthy"})
 
 try:
-    port = os.environ['PORT_EMBEDDINGS']
+    port = os.environ['VIRTUAL_PORT']
     if os.environ.get('API_KEY'):
         logger.info(f"Starting server on port {port} in private mode")
     else:
