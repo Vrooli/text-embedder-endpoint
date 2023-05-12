@@ -47,7 +47,13 @@ if [ "${ON_REMOTE}" = "y" ] || [ "${ON_REMOTE}" = "Y" ] || [ "${ON_REMOTE}" = "y
     sudo sed -i 's/#\?PasswordAuthentication .*/PasswordAuthentication yes/g' /etc/ssh/sshd_config
     sudo sed -i 's/#\?PubkeyAuthentication .*/PubkeyAuthentication yes/g' /etc/ssh/sshd_config
     sudo sed -i 's/#\?AuthorizedKeysFile .*/AuthorizedKeysFile .ssh\/authorized_keys/g' /etc/ssh/sshd_config
-    chmod 700 ~/.ssh
+    if [ ! -d ~/.ssh ]; then
+        mkdir ~/.ssh
+        chmod 700 ~/.ssh
+    fi
+    if [ ! -f ~/.ssh/authorized_keys ]; then
+        touch ~/.ssh/authorized_keys
+    fi
     chmod 600 ~/.ssh/authorized_keys
     # Try restarting service. Can either be called "sshd" or "ssh"
     sudo service sshd restart

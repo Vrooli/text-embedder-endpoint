@@ -85,7 +85,7 @@ if [ "${DEPLOY}" = "y" ] || [ "${DEPLOY}" = "Y" ] || [ "${DEPLOY}" = "yes" ] || 
     BUILD_DIR="${SITE_IP}:/var/tmp/embeddings/"
     prompt "Going to copy to ${BUILD_DIR}. This may take a while. Press any key to continue..."
     read -n1 -r -s
-    rsync -ri --info=progress2 production-docker-images.tar.gz .env root@${BUILD_DIR}
+    rsync -ri --info=progress2 -e "ssh -i ~/.ssh/id_rsa_${SITE_IP}" production-docker-images.tar.gz .env root@${BUILD_DIR}
     if [ $? -ne 0 ]; then
         error "Failed to copy files to ${BUILD_DIR}"
         exit 1
