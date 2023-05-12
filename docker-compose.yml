@@ -6,6 +6,10 @@ services:
       dockerfile: ./Dockerfile
       args:
         PROJECT_DIR: "${PROJECT_DIR}"
+    deploy:
+      resources:
+        limits:
+          memory: 1000M # Update this to suit your needs. With one gunicorn worker, doesn't seem to work if less than 1000M
     container_name: embeddings
     image: embeddings
     restart: always
