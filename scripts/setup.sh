@@ -109,8 +109,15 @@ else
     info "Detected: $(docker-compose --version)"
 fi
 
+header "Create nginx-proxy network"
+docker network create nginx-proxy
+# Ignore errors if the network already exists
+if [ $? -ne 0 ]; then
+    true
+fi
+
 header "Combining model chunks"
-cd "${HERE}/..models/hkunlp_instructor-base"
+cd "${HERE}/../models/hkunlp_instructor-base"
 cat pytorch_model.bin.part* > pytorch_model.bin
 
 info "Done! You may need to restart your editor for syntax highlighting to work correctly."
