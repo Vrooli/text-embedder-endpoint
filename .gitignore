@@ -5,6 +5,9 @@
 data/logs*
 data/redis/
 
+# Combined model (which is too large to be stored in git)
+pytorch_model.bin
+
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/

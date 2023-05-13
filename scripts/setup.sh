@@ -109,20 +109,9 @@ else
     info "Detected: $(docker-compose --version)"
 fi
 
-# Check for Git LFS
-if ! command -v git-lfs &>/dev/null; then
-    info "Git LFS is not installed. Installing Git LFS..."
-    sudo apt-get install git-lfs
-    # Check if Git LFS installation failed
-    if ! command -v git-lfs &>/dev/null; then
-        echo "Error: Git LFS installation failed."
-        exit 1
-    fi
-    sudo git lfs install
-    sudo git lfs pull
-else
-    info "Detected: $(git-lfs version)"
-fi
+header "Combining model chunks"
+cd "${HERE}/..models/hkunlp_instructor-base"
+cat pytorch_model.bin.part* > pytorch_model.bin
 
 info "Done! You may need to restart your editor for syntax highlighting to work correctly."
 info "If you haven't already, copy .env-example to .env and edit it to match your environment."
