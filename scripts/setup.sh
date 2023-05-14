@@ -118,7 +118,12 @@ fi
 
 header "Combining model chunks"
 cd "${HERE}/../models/hkunlp_instructor-base"
-cat pytorch_model.bin.part* > pytorch_model.bin
+# Only combine if the file doesn't already exist
+if [ ! -f pytorch_model.bin ]; then
+    cat pytorch_model.bin.part* > pytorch_model.bin
+fi
+# If you need to split the file again, use the following command:
+# split -b 50M -d --additional-suffix=.part pytorch_model.bin pytorch_model.bin.part
 
 info "Done! You may need to restart your editor for syntax highlighting to work correctly."
 info "If you haven't already, copy .env-example to .env and edit it to match your environment."
