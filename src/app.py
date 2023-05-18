@@ -20,7 +20,7 @@ load_dotenv()
 app = Flask(__name__)
 
 # Connect to Redis
-r = redis.Redis(host='redis', port=6379, db=0, decode_responses=True)
+r = redis.Redis(host='redis', port=6379, db=0, decode_responses=True, password=os.environ.get('REDIS_PASS'))
 
 try:
     # Load the model

@@ -9,7 +9,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1000M # Update this to suit your needs. With one gunicorn worker, doesn't seem to work if less than 1000M
+          memory: 1500M # Update this to suit your needs. With one gunicorn worker, doesn't seem to work if less than 1500M
     container_name: embeddings
     image: embeddings
     restart: always
@@ -20,6 +20,7 @@ services:
       PYTHONUNBUFFERED: 1 # Required for logging to work correctly
       PROJECT_DIR: "${PROJECT_DIR}"
       REDIS_URL: "${REDIS_URL}"
+      REDIS_PASS: "${REDIS_PASS}"
       API_KEY: "${API_KEY}"
       VIRTUAL_HOST: "${VIRTUAL_HOST}"
       VIRTUAL_PORT: "${PORT_EMBEDDINGS}"
@@ -45,7 +46,7 @@ services:
       - ./data/redis:${PROJECT_DIR}/data/redis:z
     ports:
       - "6379:6379"
-    command: sh -c "mkdir -p /data/redis/appendonlydir && rm -f /data/redis/dump.rdb && redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru --appendonly yes --dbfilename dump.rdb --dir /data/redis/"
+    command: sh -c "mkdir -p /data/redis/appendonlydir && rm -f /data/redis/dump.rdb && redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru --appendonly yes --protected-mode yes --requirepass "${REDIS_PASS}" --dbfilename dump.rdb --dir /data/redis/ && redis-cli SLAVEOF NO ONE"
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s

@@ -109,6 +109,17 @@ else
     info "Detected: $(docker-compose --version)"
 fi
 
+header "Setting vm.overcommit_memory to 1 for Redis"
+OVERCOMMIT=$(sysctl vm.overcommit_memory | awk '{ print $3 }')
+if [ "$OVERCOMMIT" -ne 1 ]; then
+    info "vm.overcommit_memory is not set to 1. Setting it..."
+    sudo sysctl -w vm.overcommit_memory=1
+    echo "vm.overcommit_memory = 1" | sudo tee -a /etc/sysctl.conf > /dev/null
+else
+    info "vm.overcommit_memory is already set to 1"
+fi
+
+
 header "Create nginx-proxy network"
 docker network create nginx-proxy
 # Ignore errors if the network already exists
