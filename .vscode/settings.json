@@ -1,6 +1,12 @@
 {
-    "[python]": {
-        "editor.defaultFormatter": "ms-python.black-formatter"
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.formatting.provider": "none",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
     },
-    "python.formatting.provider": "none"
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.autopep8"
+    }
 }

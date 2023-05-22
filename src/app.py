@@ -1,18 +1,21 @@
-import os
+import time  # Add this import at the top of your file
 import hashlib
 import json
 import logging
-from flask import Flask, request, jsonify, abort
-from InstructorEmbedding import INSTRUCTOR
-from dotenv import load_dotenv
-import redis
+import os
 import time
+
+import redis
+from dotenv import load_dotenv
+from flask import Flask, abort, jsonify, request
+from InstructorEmbedding import INSTRUCTOR
 
 # Maximum number of sentences that can be processed at once
 MAX_SENTENCES = 100
 
 # Configure logging. Set to DEBUG for more verbose logging. Default is INFO.
-logging.basicConfig(filename='app.log', level=logging.INFO, format='%(asctime)s %(levelname)s %(name)s %(message)s')
+logging.basicConfig(filename='app.log', level=logging.INFO,
+                    format='%(asctime)s %(levelname)s %(name)s %(message)s')
 logger = logging.getLogger(__name__)
 
 load_dotenv()
@@ -20,7 +23,8 @@ load_dotenv()
 app = Flask(__name__)
 
 # Connect to Redis
-r = redis.Redis(host='redis', port=6379, db=0, decode_responses=True, password=os.environ.get('REDIS_PASS'))
+r = redis.Redis(host='redis', port=6379, db=0,
+                decode_responses=True, password=os.environ.get('REDIS_PASS'))
 
 try:
     # Load the model
@@ -32,6 +36,8 @@ except Exception as e:
 logger.info('Model loaded!')
 
 # If API_KEY environment variable is set, require it in the request headers
+
+
 @app.before_request
 def check_api_key():
     api_key = request.headers.get('key', '')
@@ -41,7 +47,6 @@ def check_api_key():
         elif not api_key == os.environ.get('API_KEY', ''):
             abort(401, 'Invalid API Key')
 
-import time  # Add this import at the top of your file
 
 @app.route('/', methods=['POST'])
 def embed():
@@ -60,7 +65,8 @@ def embed():
             input_start_time = time.time()
 
             # Create a hash from the input
-            input_hash = hashlib.sha256(f"{instruction}{sentence}".encode()).hexdigest()
+            input_hash = hashlib.sha256(
+                f"{instruction}{sentence}".encode()).hexdigest()
 
             # Check if Redis has a key with that hash
             if r.exists(input_hash):
@@ -77,12 +83,14 @@ def embed():
                 r.set(input_hash, json.dumps(embeddings))
 
             input_end_time = time.time()
-            logger.debug(f"Time for processing input '{sentence}': {input_end_time - input_start_time} seconds")
+            logger.debug(
+                f"Time for processing input '{sentence}': {input_end_time - input_start_time} seconds")
 
             all_embeddings.extend(embeddings)
 
         end_time = time.time()  # Record the end time
-        logger.debug(f"Total time for embed function: {end_time - start_time} seconds")
+        logger.debug(
+            f"Total time for embed function: {end_time - start_time} seconds")
 
         return jsonify({"embeddings": all_embeddings, "model": "instructor-base"})
     except Exception as e:
@@ -106,9 +114,11 @@ def help():
     """
     return jsonify({"Help": help_text})
 
+
 @app.route('/healthcheck', methods=['GET'])
 def healthcheck():
     return jsonify({"status": "healthy"})
+
 
 try:
     port = os.environ['VIRTUAL_PORT']
