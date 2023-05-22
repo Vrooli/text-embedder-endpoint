@@ -1,4 +1,8 @@
-import time  # Add this import at the top of your file
+"""
+This module serves as a Flask server that converts text to embeddings using the 
+InstructorEmbedding model. The model reads sentences, converts them into embeddings 
+and caches the results in Redis for fast retrieval. 
+"""
 import hashlib
 import json
 import logging
@@ -31,15 +35,17 @@ try:
     logger.info('Loading model...')
     model = INSTRUCTOR('hkunlp/instructor-base')
 except Exception as e:
-    logger.error(f"Error loading model: {e}")
+    logger.error("Error loading model: %s", e)
     model = None
 logger.info('Model loaded!')
-
-# If API_KEY environment variable is set, require it in the request headers
 
 
 @app.before_request
 def check_api_key():
+    """
+    Middleware that checks for an API key in the request headers before processing a request.
+    If the key is not present or incorrect, the request is aborted.
+    """
     api_key = request.headers.get('key', '')
     if os.environ.get('API_KEY', ''):
         if not api_key:
@@ -50,6 +56,10 @@ def check_api_key():
 
 @app.route('/', methods=['POST'])
 def embed():
+    """
+    Endpoint that processes POST requests to generate embeddings for a list of sentences using the
+    InstructorEmbedding model. The embeddings are cached in Redis for future retrieval.
+    """
     try:
         start_time = time.time()  # Record the start time
 
@@ -84,22 +94,25 @@ def embed():
 
             input_end_time = time.time()
             logger.debug(
-                f"Time for processing input '{sentence}': {input_end_time - input_start_time} seconds")
+                "Time for processing input '%s': %f seconds", sentence, (input_end_time - input_start_time))
 
             all_embeddings.extend(embeddings)
 
         end_time = time.time()  # Record the end time
         logger.debug(
-            f"Total time for embed function: {end_time - start_time} seconds")
+            "Total time for embed function: %f seconds", (end_time - start_time))
 
         return jsonify({"embeddings": all_embeddings, "model": "instructor-base"})
     except Exception as e:
-        logger.error(f"Error in embed function: {e}")
+        logger.error("Error in embed function: %s", e)
         return jsonify({"error": "An error occurred during embedding. Please check your input and try again."}), 500
 
 
 @app.route('/help', methods=['GET'])
 def help():
+    """
+    Endpoint that processes GET requests to provide instructions on how to use the API.
+    """
     help_text = """
     To use this API, send a POST request to the root endpoint '/' with the following JSON body:
 
@@ -117,16 +130,19 @@ def help():
 
 @app.route('/healthcheck', methods=['GET'])
 def healthcheck():
+    """
+    Endpoint that processes GET requests to check the health status of the server.
+    """
     return jsonify({"status": "healthy"})
 
 
 try:
     port = os.environ['VIRTUAL_PORT']
     if os.environ.get('API_KEY'):
-        logger.info(f"Starting server on port {port} in private mode")
+        logger.info("Starting server on port %s in private mode", port)
     else:
-        logger.info(f"Starting server on port {port} in public mode")
+        logger.info("Starting server on port %s in public mode", port)
     if os.environ['FLASK_ENV'] == 'development':
         app.run(host='0.0.0.0', port=port)
 except Exception as e:
-    logger.error(f"Error starting server: {e}")
+    logger.error("Error starting server: %s", e)
