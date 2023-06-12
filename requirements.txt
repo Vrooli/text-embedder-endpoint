@@ -4,7 +4,7 @@ gunicorn==20.1.0
 InstructorEmbedding
 python-dotenv
 sentence_transformers>=2.2.0
-transformers==4.20.0
+transformers==4.30.0
 datasets>=2.2.0
 jsonlines
 numpy
